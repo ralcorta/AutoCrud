@@ -20,7 +20,7 @@ composer require pyxeel/auto_crud
 
 2- Second, now we can use the command
 
-```php
+```
 php artisan autocrud:init {model} {--c=true} {--r=true} {--m=false} {--s=false} {--softdeletes=true}
 ```
 
