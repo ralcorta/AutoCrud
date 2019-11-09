@@ -1,0 +1,13 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+{{softdeletesimport}}
+
+class {{modelName}} extends Model
+{
+    {{softdeletestrait}}
+
+    protected $guarded = ['id'];
+}
