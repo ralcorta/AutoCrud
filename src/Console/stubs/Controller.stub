@@ -12,7 +12,7 @@ class {{modelName}}Controller extends Controller
     {
         ${{modelNamePluralLowerCase}} = {{modelName}}::latest()->get();
 
-        return view('${{modelNamePluralLowerCase}}.index', compact("{{modelNamePluralLowerCase}}"));
+        return view('{{modelNamePluralLowerCase}}.index', compact("{{modelNamePluralLowerCase}}"));
     }
 
     public function store({{modelName}}Request $request)
@@ -23,7 +23,7 @@ class {{modelName}}Controller extends Controller
             flash("Stored successful!")
             ->success()->important();
 
-            return redirect()->back();
+            return redirect()->route('{{modelNameSingularLowerCase}}.show', ${{modelNameSingularLowerCase}});
         } catch (\Exception $ex) {
             flash($ex->getMessage())
                 ->error()
@@ -36,7 +36,7 @@ class {{modelName}}Controller extends Controller
     public function show({{modelName}} ${{modelNameSingularLowerCase}})
     {
         try {
-            return redirect()->route('{{modelNameSingularLowerCase}}.show', compact('{{modelNameSingularLowerCase}}'));
+            return view('{{modelNameSingularLowerCase}}.show', compact('{{modelNameSingularLowerCase}}'));
         } catch (\Exception $ex) {
             flash($ex->getMessage())
                 ->error()
