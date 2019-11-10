@@ -28,4 +28,4 @@ php artisan autocrud:init {model} {--c=true} {--r=true} {--m=false} {--s=false} 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details
