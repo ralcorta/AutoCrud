@@ -6,21 +6,21 @@ use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-class AutoCrudCommand extends Command
+class AutoCrudCompleteCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'autocrud:init {model} {--c=true} {--r=true} {--m=false} {--s=false} {--softdeletes=true}';
+    protected $signature = 'autocrud:complete {model}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Generator of CRUD';
+    protected $description = 'Generator of full CRUD';
 
     /**
      * Create a new command instance.
@@ -40,38 +40,32 @@ class AutoCrudCommand extends Command
     public function handle()
     {
         $model = $this->argument('model');
-        $softdeletes = $this->option('softdeletes');
-        $controller = $this->option('c');
-        $request = $this->option('r');
-        $migracion = $this->option('m');
-        $seeder = $this->option('s');
 
-        $this->comment("Creating Model...");
-        $this->model($model, $softdeletes);
+        $config = include $this->config();
 
-        if ($controller) {
-            $this->comment("Creating Controller...");
-            $this->controller($model);
-        }
+        $this->comment($config);
 
-        if ($request) {
-            $this->comment("Creating Request...");
-            $this->request($model);
-        }
 
-        if ($migracion) {
-            $this->comment("Creating Migration...");
-            $this->migration($model, $softdeletes);
-        }
+        // $this->comment("Creating Scaffolding...");
 
-        if ($seeder) {
-            $this->comment("Creating Seeder...");
-            $this->seeder($model);
-        }
+        // $this->model($model);
 
-        File::append(base_path('routes/web.php'), 'Route::resource(\'' . Str::plural(strtolower($model)) . "', '{$model}Controller');");
+        // $this->controller($model);
 
-        $this->info("CRUD generated successful !");
+        // $this->request($model);
+
+        // $this->migration($model);
+
+        // $this->seeder($model);
+
+        // File::append(base_path('routes/web.php'), 'Route::resource(\'' . Str::plural(strtolower($model)) . "', '{$model}Controller');");
+
+        // $this->info("CRUD generated successful !");
+    }
+
+    protected function config()
+    {
+        return config_path('AutoCrud.php');
     }
 
     protected function getStubPath($type)
@@ -84,15 +78,13 @@ class AutoCrudCommand extends Command
         return file_get_contents($this->getStubPath($type));
     }
 
-    protected function model($name, $softdeletes)
+    protected function model($name)
     {
         $softdeletesImport = '';
         $softdeletesTrait = '';
 
-        if ($softdeletes) {
-            $softdeletesImport = 'use Illuminate\Database\Eloquent\SoftDeletes;';
-            $softdeletesTrait = 'use SoftDeletes;';
-        }
+        $softdeletesImport = 'use Illuminate\Database\Eloquent\SoftDeletes;';
+        $softdeletesTrait = 'use SoftDeletes;';
 
         $modelTemplate = str_replace(
             [
@@ -144,7 +136,7 @@ class AutoCrudCommand extends Command
         file_put_contents(app_path("/Http/Requests/{$name}Request.php"), $requestTemplate);
     }
 
-    protected function migration($name, $softdeletes)
+    protected function migration($name)
     {
         $softdeletesTemplate = '';
 
@@ -152,8 +144,7 @@ class AutoCrudCommand extends Command
 
         $pluralNameLowerCase = strtolower(Str::plural($name));
 
-        if ($softdeletes)
-            $softdeletesTemplate = '$table->softDeletes();';
+        $softdeletesTemplate = '$table->softDeletes();';
 
         $migrationTemplate = str_replace(
             [
