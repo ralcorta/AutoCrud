@@ -50,6 +50,9 @@ class AutoCrudCompleteCommand extends Command
 
             $model = new Model($modelName, $configs);
 
+            if ($model->executed())
+                continue;
+
             $attributes = $model->getAttributeString();
 
             $rules = $model->getRulesString();

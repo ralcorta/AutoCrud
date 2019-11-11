@@ -11,7 +11,8 @@ class Model
      */
     private $name,
         $attributes,
-        $relationships;
+        $relationships,
+        $executed;
 
     /**
      * Create a new configurationModel.
@@ -23,6 +24,12 @@ class Model
         $this->name = $model;
         $this->attributes = $config['attributes'] ?? [];
         $this->relationships = $config['relationships'] ?? [];
+        $this->executed = isset($config['executed']) && $config['executed'];
+    }
+
+    public function executed(): bool
+    {
+        return $this->executed;
     }
 
     public function getRelationships(): array
