@@ -5,6 +5,7 @@ namespace Pyxeel\AutoCrud\Console\Commands;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Pyxeel\AutoCrud\Model;
 
 class AutoCrudCompleteCommand extends Command
 {
@@ -13,7 +14,7 @@ class AutoCrudCompleteCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'autocrud:complete {model}';
+    protected $signature = 'autocrud:complete {model} {--slug=true}';
 
     /**
      * The console command description.
@@ -39,12 +40,37 @@ class AutoCrudCompleteCommand extends Command
      */
     public function handle()
     {
-        $model = $this->argument('model');
+        $this->comment("Creating Scaffolding...");
 
         $config = include $this->config();
 
-        $this->comment($config);
+        foreach ($config as $modelName => $configs) {
 
+            $slug = $this->option('slug');
+
+            $model = new Model($modelName, $configs);
+
+            $attributes = $model->getAttributeString();
+
+            $rules = $model->getRulesString();
+
+            $migrations = $model->getMigrations();
+
+
+            // $this->model($modelName, $attributes, $rules, $slug);
+
+            // $this->controller($modelName);
+
+            // $this->request($modelName, $rules);
+
+            $this->migration($modelName, $migrations, $slug);
+
+            // $this->seeder($model);
+
+            // File::append(base_path('routes/web.php'), 'Route::resource(\'' . Str::plural(strtolower($model)) . "', '{$model}Controller');");
+        }
+
+        // dd($config);
 
         // $this->comment("Creating Scaffolding...");
 
@@ -60,7 +86,7 @@ class AutoCrudCompleteCommand extends Command
 
         // File::append(base_path('routes/web.php'), 'Route::resource(\'' . Str::plural(strtolower($model)) . "', '{$model}Controller');");
 
-        // $this->info("CRUD generated successful !");
+        $this->info("CRUD generated successful !");
     }
 
     protected function config()
@@ -70,7 +96,7 @@ class AutoCrudCompleteCommand extends Command
 
     protected function getStubPath($type)
     {
-        return __DIR__ . "/../stubs/{$type}.stub";
+        return __DIR__ . "/../stubs/complete/{$type}.stub";
     }
 
     protected function getStub($type)
@@ -78,24 +104,41 @@ class AutoCrudCompleteCommand extends Command
         return file_get_contents($this->getStubPath($type));
     }
 
-    protected function model($name)
+    protected function model($name, $attributes, $rules, $slug = true)
     {
-        $softdeletesImport = '';
-        $softdeletesTrait = '';
+        $slugImports = '';
 
-        $softdeletesImport = 'use Illuminate\Database\Eloquent\SoftDeletes;';
-        $softdeletesTrait = 'use SoftDeletes;';
+        $slugCode = '';
+
+        if ($slug) {
+            $slugImports = "use Spatie\Sluggable\HasSlug;
+        use Spatie\Sluggable\SlugOptions;\n";
+            $slugCode = "
+    /**
+    * Get the options for generating the slug.
+    */
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom(['id']) // Change this
+            ->saveSlugsTo('slug');
+    }";
+        }
 
         $modelTemplate = str_replace(
             [
                 '{{modelName}}',
-                '{{softdeletesimport}}',
-                '{{softdeletestrait}}'
+                '{{attributes}}',
+                '{{rules}}',
+                '{{slugImports}}',
+                '{{slugCode}}'
             ],
             [
                 $name,
-                $softdeletesImport,
-                $softdeletesTrait,
+                $attributes,
+                $rules,
+                $slugImports,
+                $slugCode
             ],
             $this->getStub('Model')
         );
@@ -122,11 +165,14 @@ class AutoCrudCompleteCommand extends Command
         file_put_contents(app_path("/Http/Controllers/{$name}Controller.php"), $controllerTemplate);
     }
 
-    protected function request($name)
+    protected function request($name, $rules)
     {
+        if (!$rules)
+            $rules = '// Rules...';
+
         $requestTemplate = str_replace(
-            ['{{modelName}}'],
-            [$name],
+            ['{{modelName}}', '{{rules}}'],
+            [$name, $rules],
             $this->getStub('Request')
         );
 
@@ -136,11 +182,11 @@ class AutoCrudCompleteCommand extends Command
         file_put_contents(app_path("/Http/Requests/{$name}Request.php"), $requestTemplate);
     }
 
-    protected function migration($name)
+    protected function migration($name, $migrations, $slug = true)
     {
-        $softdeletesTemplate = '';
-
         $pluralName = Str::plural($name);
+
+        $slug = $slug ? '$table->string("slug");' . "\n" : '';
 
         $pluralNameLowerCase = strtolower(Str::plural($name));
 
@@ -150,12 +196,16 @@ class AutoCrudCompleteCommand extends Command
             [
                 '{{modelNamePluralLowerCase}}',
                 '{{modelNamePlural}}',
-                '{{softdeletes}}'
+                '{{softdeletes}}',
+                '{{migrations}}',
+                '{{slug}}'
             ],
             [
                 $pluralNameLowerCase,
                 $pluralName,
-                $softdeletesTemplate
+                $softdeletesTemplate,
+                $migrations,
+                $slug
             ],
             $this->getStub('Migration')
         );

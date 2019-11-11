@@ -18,8 +18,10 @@ return [
     */
 
     'Example' => [
-        'attributeOne' => 'numeric|required',
-        'attributeTwo' => 'string|nullable',
+        'attributes' => [
+            'attributeOne' => 'numeric|required',
+            'attributeTwo' => 'string|nullable'
+        ],
     ]
 
 ];

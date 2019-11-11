@@ -1,0 +1,44 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+{{slugImports}}
+class {{modelName}} extends Model
+{
+    use SoftDeletes;
+
+    protected $guarded = ['id'];
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        {{attributes}}
+    ];
+
+    /**
+     * The rules of this model.
+     *
+     * @var array
+     */
+    public static $rules = [
+        {{rules}}
+    ];
+
+
+    /**
+     * Get the rules of this model.
+     *
+     * @var array
+     */
+    public static function rules()
+    {
+        return self::$rules;
+    }
+
+    {{slugCode}}
+}

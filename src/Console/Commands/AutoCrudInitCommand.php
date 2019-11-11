@@ -76,7 +76,7 @@ class AutoCrudInitCommand extends Command
 
     protected function getStubPath($type)
     {
-        return __DIR__ . "/../stubs/{$type}.stub";
+        return __DIR__ . "/../stubs/init/{$type}.stub";
     }
 
     protected function getStub($type)
