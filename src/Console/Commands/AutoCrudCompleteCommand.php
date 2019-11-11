@@ -56,35 +56,18 @@ class AutoCrudCompleteCommand extends Command
 
             $migrations = $model->getMigrations();
 
+            $this->model($modelName, $attributes, $rules, $slug);
 
-            // $this->model($modelName, $attributes, $rules, $slug);
+            $this->controller($modelName);
 
-            // $this->controller($modelName);
-
-            // $this->request($modelName, $rules);
+            $this->request($modelName, $attributes);
 
             $this->migration($modelName, $migrations, $slug);
 
-            // $this->seeder($model);
+            $this->seeder($modelName);
 
-            // File::append(base_path('routes/web.php'), 'Route::resource(\'' . Str::plural(strtolower($model)) . "', '{$model}Controller');");
+            File::append(base_path('routes/web.php'), 'Route::resource(\'' . Str::plural(strtolower($modelName)) . "', '{$modelName}Controller');");
         }
-
-        // dd($config);
-
-        // $this->comment("Creating Scaffolding...");
-
-        // $this->model($model);
-
-        // $this->controller($model);
-
-        // $this->request($model);
-
-        // $this->migration($model);
-
-        // $this->seeder($model);
-
-        // File::append(base_path('routes/web.php'), 'Route::resource(\'' . Str::plural(strtolower($model)) . "', '{$model}Controller');");
 
         $this->info("CRUD generated successful !");
     }
@@ -165,10 +148,16 @@ class AutoCrudCompleteCommand extends Command
         file_put_contents(app_path("/Http/Controllers/{$name}Controller.php"), $controllerTemplate);
     }
 
-    protected function request($name, $rules)
+    protected function request($name, $attributesString)
     {
-        if (!$rules)
-            $rules = '// Rules...';
+        $rules = '';
+
+        if ($attributesString)
+            $rules = $name . "::rules();";
+        else
+            $rules = "[
+                // Rules...
+            ];";
 
         $requestTemplate = str_replace(
             ['{{modelName}}', '{{rules}}'],

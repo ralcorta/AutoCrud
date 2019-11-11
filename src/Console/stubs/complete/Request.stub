@@ -23,9 +23,7 @@ class {{modelName}}Request extends FormRequest
      */
     public function rules()
     {
-        return [
-            {{rules}}
-        ];
+        return {{rules}}
     }
 
     /**
