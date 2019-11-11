@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-class AutoCrudCommand extends Command
+class AutoCrudInitCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -76,7 +76,7 @@ class AutoCrudCommand extends Command
 
     protected function getStubPath($type)
     {
-        return __DIR__ . "/../stubs/{$type}.stub";
+        return __DIR__ . "/../stubs/init/{$type}.stub";
     }
 
     protected function getStub($type)

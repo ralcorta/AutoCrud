@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\{{modelName}};
+use Symfony\Component\Console\Input\Input;
+use App\Http\Requests\{{modelName}}Request;
+
+class {{modelName}}Controller extends Controller
+{
+    public function index()
+    {
+        ${{modelNamePluralLowerCase}} = {{modelName}}::latest()->get();
+
+        return view('{{modelNamePluralLowerCase}}.index', compact("{{modelNamePluralLowerCase}}"));
+    }
+
+    public function store({{modelName}}Request $request)
+    {
+        try {
+            ${{modelNameSingularLowerCase}} = {{modelName}}::create($request->all());
+
+            flash("Stored successful!")
+            ->success()->important();
+
+            return redirect()->route('{{modelNameSingularLowerCase}}.show', ${{modelNameSingularLowerCase}});
+        } catch (\Exception $ex) {
+            flash($ex->getMessage())
+                ->error()
+                ->important();
+
+            return back()->withInput(Input::all());
+        }
+    }
+
+    public function show({{modelName}} ${{modelNameSingularLowerCase}})
+    {
+        try {
+            return view('{{modelNameSingularLowerCase}}.show', compact('{{modelNameSingularLowerCase}}'));
+        } catch (\Exception $ex) {
+            flash($ex->getMessage())
+                ->error()
+                ->important();
+
+            return back()->withInput(Input::all());
+        }
+    }
+
+    public function update({{modelName}}Request $request, {{modelName}} ${{modelNameSingularLowerCase}})
+    {
+        try {
+            ${{modelNameSingularLowerCase}}->update($request->all());
+
+            flash("Updated successful!")
+                ->success()
+                ->important();
+
+            return redirect()->back();
+        } catch (\Exception $ex) {
+            flash($ex->getMessage())
+                ->error()
+                ->important();
+
+            return back()->withInput(Input::all());
+        }
+    }
+
+    public function destroy({{modelName}} ${{modelNameSingularLowerCase}})
+    {
+        try {
+            ${{modelNameSingularLowerCase}}->delete();
+
+            return redirect()->route('{{modelNamePluralLowerCase}}.index');
+        } catch (\Exception $ex) {
+            flash($ex->getMessage())
+                ->error()
+                ->important();
+
+            return back()->withInput(Input::all());
+        }
+    }
+}
