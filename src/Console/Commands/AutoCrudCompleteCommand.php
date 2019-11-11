@@ -14,7 +14,7 @@ class AutoCrudCompleteCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'autocrud:complete {model} {--slug=true}';
+    protected $signature = 'autocrud:complete';
 
     /**
      * The console command description.
