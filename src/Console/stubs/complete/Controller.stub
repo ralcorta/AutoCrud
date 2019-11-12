@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\{{modelName}};
-use Symfony\Component\Console\Input\Input;
+use Illuminate\Support\Facades\Request;
 use App\Http\Requests\{{modelName}}Request;
 
 class {{modelName}}Controller extends Controller
@@ -29,7 +29,7 @@ class {{modelName}}Controller extends Controller
                 ->error()
                 ->important();
 
-            return back()->withInput(Input::all());
+            return back()->withInput(Request::all());
         }
     }
 
@@ -42,7 +42,7 @@ class {{modelName}}Controller extends Controller
                 ->error()
                 ->important();
 
-            return back()->withInput(Input::all());
+            return back()->withInput(Request::all());
         }
     }
 
@@ -61,7 +61,7 @@ class {{modelName}}Controller extends Controller
                 ->error()
                 ->important();
 
-            return back()->withInput(Input::all());
+            return back()->withInput(Request::all());
         }
     }
 
@@ -76,7 +76,7 @@ class {{modelName}}Controller extends Controller
                 ->error()
                 ->important();
 
-            return back()->withInput(Input::all());
+            return back()->withInput(Request::all());
         }
     }
 }
