@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\{{modelName}};
 
 class {{modelName}}Request extends FormRequest
 {
